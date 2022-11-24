@@ -1,18 +1,18 @@
 #include "UEPyExporter.h"
-
-
+#include "UObject/GCObjectScopeGuard.h"
+#include "AssetExportTask.h"
 #include "Exporters/Exporter.h"
 
 
 PyObject *py_ue_export_to_file(ue_PyUObject * self, PyObject * args)
 {
-
 	ue_py_check(self);
 
 	PyObject *py_object;
 	char *filename;
+	bool bShowExportOptions = false;
 
-	if (!PyArg_ParseTuple(args, "Os:export_to_file", &py_object, &filename))
+	if (!PyArg_ParseTuple(args, "Osp:export_to_file", &py_object, &filename, &bShowExportOptions))
 	{
 		return nullptr;
 	}
@@ -29,10 +29,13 @@ PyObject *py_ue_export_to_file(ue_PyUObject * self, PyObject * args)
 		return PyErr_Format(PyExc_Exception, "argument is not a UObject");
 	}
 
+	Exporter->SetShowExportOption(bShowExportOptions);
 	if (UExporter::ExportToFile(Object, Exporter, UTF8_TO_TCHAR(filename), false, false, false) > 0)
 	{
 		Py_RETURN_TRUE;
 	}
+
+
 	Py_RETURN_FALSE;
 }
 
