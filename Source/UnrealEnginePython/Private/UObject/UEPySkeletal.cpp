@@ -875,10 +875,11 @@ PyObject *py_ue_skeletal_mesh_build_lod(ue_PyUObject *self, PyObject * args, PyO
 	PyObject *py_compute_normals = nullptr;
 	PyObject *py_compute_tangents = nullptr;
 	PyObject *py_use_mikk = nullptr;
+	PyObject *py_RemoveDegenerateTriangle=nullptr;
 
-	static char *kw_names[] = { (char *)"soft_vertices", (char *)"lod", (char *)"compute_normals", (char *)"compute_tangents", (char *)"use_mikk", nullptr };
+	static char *kw_names[] = { (char *)"soft_vertices", (char *)"lod", (char *)"compute_normals", (char *)"compute_tangents", (char *)"use_mikk", (char*)"RemoveDegenerateTriangle", nullptr };
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|iOOO:skeletal_mesh_build_lod", kw_names, &py_ss_vertex, &lod_index, &py_compute_normals, &py_compute_tangents, &py_use_mikk))
+	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|iOOOO:skeletal_mesh_build_lod", kw_names, &py_ss_vertex, &lod_index, &py_compute_normals, &py_compute_tangents, &py_use_mikk, &py_RemoveDegenerateTriangle))
 	{
 		return nullptr;
 	}
@@ -1063,7 +1064,8 @@ PyObject *py_ue_skeletal_mesh_build_lod(ue_PyUObject *self, PyObject * args, PyO
 	build_settings.bUseMikkTSpace = (py_use_mikk && PyObject_IsTrue(py_use_mikk));
 	build_settings.bComputeNormals = (py_compute_normals && PyObject_IsTrue(py_compute_normals));
 	build_settings.bComputeTangents = (py_compute_tangents && PyObject_IsTrue(py_compute_tangents));
-	build_settings.bRemoveDegenerateTriangles = true;
+	build_settings.bRemoveDegenerateTriangles = (py_RemoveDegenerateTriangle && PyObject_IsTrue(py_RemoveDegenerateTriangle));;
+
 
 	bool success = MeshUtilities.BuildSkeletalMesh(lod_model, mesh->RefSkeleton, influences, wedges, faces, points, points_to_map, build_settings);
 
